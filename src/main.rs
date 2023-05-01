@@ -1,57 +1,55 @@
-use iced::alignment;
-use iced::theme;
-use iced::widget::Row;
-use iced::widget::button;
-use iced::widget::{
-    checkbox, column, container, horizontal_space, image, radio, row,
-    scrollable, slider, text, text_input, toggler, vertical_space,
-};
-use iced::widget::{Button, Column, Container, Slider};
-use iced::{Color, Element, Font, Length, Renderer, Sandbox, Settings};
+use std::path::PathBuf;
+
+use iced::widget::{button, Column};
+use iced::widget::{column, container,text};
+use iced::{Alignment, Element, Length,Sandbox, Settings};
+use native_dialog::FileDialog;
 struct Counter {
-    value: i32
+    pdf_path: PathBuf,
 }
 
 #[derive(Debug, Clone, Copy)]
 pub enum Message {
-    IncrementPressed,
-    DecrementPressed
+    FileSelect,
 }
 
 impl Sandbox for Counter {
     type Message = Message;
 
     fn new() -> Self {
-        Counter { value: 0 }
+        Counter { pdf_path: PathBuf::new() }
     }
     fn title(&self) -> String {
         "Vortex UI".to_string()
     }
-   fn view(&self) -> Element<Message> {
-        let Counter { value } = self;
+    fn view(&self) -> Element<Message> {
+        let welcome_text = text("Welcome to Vortex UI!");
 
-        let column:Column<_> = column![];
+        let select_files_button = button("Select file")
+            .on_press(Message::FileSelect)
+            .padding(10);
 
-        let value_row = row![text(value)];
+        let column: Column<_> = column![welcome_text, select_files_button]
+            .align_items(Alignment::Center)
+            .spacing(10);
 
-        let value_row = value_row.align_items(iced::Alignment::Center);
-
-        let button_row = row![button("+").on_press(Message::IncrementPressed),button("-").on_press(Message::DecrementPressed)];
-        
-        let column = column.push(value_row);
-        let column = column.push(button_row);
-
-        container(column).height(Length::Fill).center_y().center_x().into() 
-       
-   }
+        container(column)
+            .width(Length::Fill)
+            .height(Length::Fill)
+            .center_x()
+            .center_y()
+            .into()
+    }
 
     fn update(&mut self, message: Message) {
         match message {
-            Message::IncrementPressed => {
-                self.value += 1;
-            }
-            Message::DecrementPressed => {
-                self.value -= 1;
+            Message::FileSelect => {
+                let path = FileDialog::new()
+                    .set_location("~")
+                    .add_filter("PDF File", &["pdf"])
+                    .show_open_single_file()
+                    .unwrap();
+                self.pdf_path = path.unwrap();
             }
         }
     }
