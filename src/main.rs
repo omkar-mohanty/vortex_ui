@@ -3,9 +3,12 @@ mod extraction;
 use std::ops::RangeInclusive;
 use std::path::PathBuf;
 
+use extraction::{Progress, extract};
 use iced::widget::{button, progress_bar, Column};
 use iced::widget::{column, container, text};
-use iced::{Alignment, Element, Length, Settings, Application, executor, Theme, Command, Subscription};
+use iced::{
+    executor, Alignment, Application, Command, Element, Length, Settings, Subscription, Theme,
+};
 use native_dialog::FileDialog;
 struct Vortex {
     pdf_path: PathBuf,
@@ -20,7 +23,7 @@ enum AppState {
 #[derive(Debug, Clone, Copy)]
 pub enum Message {
     FileSelect,
-    ExtractionProgress(f32)
+    ExtractionProgress(Progress),
 }
 
 impl Application for Vortex {
@@ -29,12 +32,14 @@ impl Application for Vortex {
     type Flags = ();
     type Theme = Theme;
 
-    fn new(_flags:()) -> (Vortex, Command<Message>) {
-        (Vortex {
-            pdf_path: PathBuf::new(),
-            state: AppState::Init,
-        },
-        Command::none())
+    fn new(_flags: ()) -> (Vortex, Command<Message>) {
+        (
+            Vortex {
+                pdf_path: PathBuf::new(),
+                state: AppState::Init,
+            },
+            Command::none(),
+        )
     }
     fn title(&self) -> String {
         "Vortex UI".to_string()
@@ -85,9 +90,7 @@ impl Application for Vortex {
                 self.pdf_path = path.unwrap();
                 self.state = AppState::Processing;
             }
-            Message::ExtractionProgress(progress) => {
-
-            }
+            Message::ExtractionProgress(progress) => {}
         };
 
         Command::none()
