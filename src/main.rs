@@ -94,10 +94,6 @@ impl Application for Vortex {
     }
 }
 
-pub struct Extraction {
-
-}
-
 fn main() {
     Vortex::run(Settings::default()).unwrap();
 }
