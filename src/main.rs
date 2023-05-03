@@ -10,6 +10,9 @@ use iced::{
     executor, Alignment, Application, Command, Element, Length, Settings, Subscription, Theme,
 };
 use native_dialog::FileDialog;
+
+pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+
 struct Vortex {
     pdf_path: PathBuf,
     state: AppState,

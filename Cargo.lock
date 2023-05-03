@@ -487,9 +487,9 @@ checksum = "bf43edc576402991846b093a7ca18a3477e0ef9c588cde84964b5d3e43016642"
 
 [[package]]
 name = "const_panic"
-version = "0.2.7"
+version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "58baae561b85ca19b3122a9ddd35c8ec40c3bcd14fe89921824eae73f7baffbf"
+checksum = "6051f239ecec86fde3410901ab7860d458d160371533842974fc61f96d15879b"
 
 [[package]]
 name = "core-foundation"
@@ -1414,21 +1414,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dfa686283ad6dd069f105e5ab091b04c62850d3e4cf5d67debad1933f55023df"
 
 [[package]]
-name = "html"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc3a7577238029a2704c53d9571a1e5c67f36ea9f487b03b405df8b64030cacf"
-dependencies = [
- "html-sys",
-]
-
-[[package]]
-name = "html-sys"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "05eabf4b1d6f9cf57ee8ddaab1a3065ae8394c5cb08d80f9b49d9ebe9307b56d"
-
-[[package]]
 name = "humantime"
 version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2250,6 +2235,33 @@ dependencies = [
 [[package]]
 name = "pdf"
 version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e375ec076445f61d4dbc4636e9e788f841d279c65d6fea8a3875caddd4f2dd82"
+dependencies = [
+ "aes",
+ "bitflags",
+ "cbc",
+ "datasize",
+ "deflate",
+ "fax",
+ "globalcache",
+ "inflate",
+ "istring",
+ "itertools",
+ "jpeg-decoder",
+ "log",
+ "md5",
+ "once_cell",
+ "pdf_derive 0.1.22 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2",
+ "snafu",
+ "stringprep",
+ "weezl",
+]
+
+[[package]]
+name = "pdf"
+version = "0.8.1"
 source = "git+https://github.com/omkar-mohanty/pdf.git?branch=png_flate#340b35c8996bca2ff14babe882a2064d03d5e057"
 dependencies = [
  "aes",
@@ -2266,11 +2278,22 @@ dependencies = [
  "log",
  "md5",
  "once_cell",
- "pdf_derive",
+ "pdf_derive 0.1.22 (git+https://github.com/omkar-mohanty/pdf.git?branch=png_flate)",
  "sha2",
  "snafu",
  "stringprep",
  "weezl",
+]
+
+[[package]]
+name = "pdf_derive"
+version = "0.1.22"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f4007262775d0798de87b15cbc64cf1aed5f7ee87eec847e297b69d8ed4b4f8"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
 ]
 
 [[package]]
@@ -2365,9 +2388,9 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "pkg-config"
-version = "0.3.26"
+version = "0.3.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ac9a59f73473f1b8d852421e59e64809f025994837ef743615c6d0c5b305160"
+checksum = "26072860ba924cbfa98ea39c8c19b4dd6a4a25423dbdf219c1eca91aa0cf6964"
 
 [[package]]
 name = "png"
@@ -3016,14 +3039,13 @@ checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 [[package]]
 name = "vortex"
 version = "1.0.0"
-source = "git+https://github.com/omkar-mohanty/vortex#2ec10e1d6927d229d28b34296cd38501f36e6a24"
+source = "git+https://github.com/omkar-mohanty/vortex#dc757539514069bf03011db74b74869062343e3c"
 dependencies = [
  "clap",
  "env_logger",
- "html",
  "image",
  "log",
- "pdf",
+ "pdf 0.8.1 (git+https://github.com/omkar-mohanty/pdf.git?branch=png_flate)",
 ]
 
 [[package]]
@@ -3032,6 +3054,7 @@ version = "0.1.0"
 dependencies = [
  "iced",
  "native-dialog",
+ "pdf 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "vortex",
 ]
 
@@ -3623,9 +3646,9 @@ dependencies = [
 
 [[package]]
 name = "winnow"
-version = "0.4.4"
+version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5617da7e1f97bf363947d767b91aaf3c2bbc19db7fda9c65af1278713d58e0a2"
+checksum = "61de7bac303dc551fe038e2b3cef0f571087a47571ea6e79a87692ac99b99699"
 dependencies = [
  "memchr",
 ]
