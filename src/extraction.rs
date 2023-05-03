@@ -1,6 +1,6 @@
 use std::{hash::Hash, io::Read, path::PathBuf};
 
-use iced::{subscription, Subscription};
+use iced::{subscription, Subscription, futures::channel::mpsc::UnboundedSender};
 
 pub struct Extraction {
     state: State,
@@ -8,9 +8,13 @@ pub struct Extraction {
 }
 
 impl Extraction {
-   pub fn extract(&self) {
-
-    } 
+    pub fn extract(&mut self) {
+        match &self.state {
+            State::Ready(path) => {}
+            State::Extracting { total, completed } => {}
+            State::Finished => {}
+        }
+    }
 }
 
 pub fn extract<I: 'static + Copy + Send + Sync + Hash + Read>(
@@ -24,17 +28,26 @@ pub fn extract<I: 'static + Copy + Send + Sync + Hash + Read>(
 
 async fn extract_file_impl<I: Copy>(file: I, state: State) -> ((I, Progress), State) {
     match state {
-       State::Ready(_path) => {
-            ((file, Progress::Started), State::Extracting { total: 0, completed: 0 })
-        },
+        State::Ready(_path) => (
+            (file, Progress::Started),
+            State::Extracting {
+                total: 0,
+                completed: 0,
+            },
+        ),
         State::Extracting { total, completed } => {
-            let progress = completed as f32/ total as f32;
-            ((file, Progress::Advanced(progress)), State::Extracting { total, completed})
-        },
-        State::Finished => {
-            iced::futures::future::pending().await
+            let progress = completed as f32 / total as f32;
+            (
+                (file, Progress::Advanced(progress)),
+                State::Extracting { total, completed },
+            )
         }
+        State::Finished => iced::futures::future::pending().await,
     }
+}
+
+fn extraction_fn_thread(sender: UnboundedSender<(u32, u32)>, pdf_file_path: PathBuf) {
+    
 }
 
 #[derive(Clone, Copy, Debug)]

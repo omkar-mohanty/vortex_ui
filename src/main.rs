@@ -3,7 +3,7 @@ mod extraction;
 use std::ops::RangeInclusive;
 use std::path::PathBuf;
 
-use extraction::{Progress, extract};
+use extraction::{extract, Progress};
 use iced::widget::{button, progress_bar, Column};
 use iced::widget::{column, container, text};
 use iced::{
