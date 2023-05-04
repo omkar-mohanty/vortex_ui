@@ -1,35 +1,74 @@
-use crate::Result;
-use std::{hash::Hash, io::Read, path::PathBuf};
+use crate::{Message, Result};
+use std::{
+    hash::Hash,
+    io::Read,
+    path::PathBuf,
+    thread::{self, JoinHandle},
+};
 
 use iced::{subscription, Subscription};
 use vortex::extractor::extract_images;
 
-pub fn extract<I: 'static + Copy + Send + Sync + Hash + Read>(
+pub struct Extraction {
+    id: i32,
+    state: State,
+    pub progress: i32
+}
+
+impl Extraction {
+    pub fn new(pdf_file_path: PathBuf) -> Self {
+        Self {
+            state: State::Ready(pdf_file_path),
+            id: 0,
+            progress:0
+        }
+    }
+
+    pub fn subscription(&self) -> Subscription<Message> {
+        match &self.state {
+            State::Ready(path) => extract(self.id, path.to_path_buf())
+                .map(|progress| Message::ExtractionProgress(progress)),
+            _ => Subscription::none(),
+        }
+    }
+}
+
+pub fn extract<I: 'static + Copy + Send + Sync + Hash>(
     id: I,
     file_path: PathBuf,
-) -> Subscription<State> {
+) -> Subscription<Progress> {
     subscription::unfold(id, State::Ready(file_path), move |state| {
         extract_file_impl(id, state)
     })
 }
 
-async fn extract_file_impl<I: Copy>(id: I, state: State) -> ((I, Progress), State) {
+async fn extract_file_impl<I: Copy>(_id: I, state: State) -> (Progress, State) {
     match state {
         State::Ready(path) => {
-            let images = extract_images(vortex::extractor::Method::File(path)).unwrap();
-            ((id, Progress::Started), State::Extracting)
+            let handle = thread::spawn(move || {
+                extraction_fn_thread(path).unwrap();
+            });
+
+            (Progress::Started, State::Extracting(handle))
         }
-        State::Extracting => {
-            ((id, Progress::Advanced(progress)), State::Extracting)
+        State::Extracting(handle) => {
+            handle.join().unwrap();
+
+            (Progress::Finished, State::Finished)
         }
         State::Finished => iced::futures::future::pending().await,
     }
 }
 
+fn extraction_fn_thread(pdf_file_path: PathBuf) -> Result<()> {
+    let _images = extract_images(vortex::extractor::Method::File(pdf_file_path)).unwrap();
+    Ok(())
+}
+
 #[derive(Clone, Copy, Debug)]
 pub enum Progress {
     Started,
-    Advanced(f32),
+    Advanced,
     Finished,
     Errored,
 }
@@ -37,5 +76,5 @@ pub enum Progress {
 pub enum State {
     Ready(PathBuf),
     Finished,
-    Extracting,
+    Extracting(JoinHandle<()>),
 }
