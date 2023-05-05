@@ -1,7 +1,6 @@
 use crate::{Message, Result};
 use std::{
     hash::Hash,
-    io::Read,
     path::PathBuf,
     thread::{self, JoinHandle},
 };
