@@ -6,7 +6,7 @@ use std::{
 };
 
 use iced::{subscription, Subscription};
-use vortex::extractor::extract_images;
+use vortex::{extractor::extract_images, RawImage};
 
 pub struct Extraction {
     id: i32,
@@ -45,7 +45,10 @@ async fn extract_file_impl<I: Copy>(_id: I, state: State) -> (Progress, State) {
     match state {
         State::Ready(path) => {
             let handle = thread::spawn(move || {
-                extraction_fn_thread(path).unwrap();
+                match extraction_fn_thread(path) {
+                    Ok(img) => img,
+                    Err(_) => vec![]
+                }
             });
 
             (Progress::Started, State::Extracting(handle))
@@ -59,9 +62,9 @@ async fn extract_file_impl<I: Copy>(_id: I, state: State) -> (Progress, State) {
     }
 }
 
-fn extraction_fn_thread(pdf_file_path: PathBuf) -> Result<()> {
-    let _images = extract_images(vortex::extractor::Method::File(pdf_file_path)).unwrap();
-    Ok(())
+fn extraction_fn_thread(pdf_file_path: PathBuf) -> Result<Vec<RawImage>> {
+    let images = extract_images(vortex::extractor::Method::File(pdf_file_path))?;
+    Ok(images)
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -75,5 +78,5 @@ pub enum Progress {
 pub enum State {
     Ready(PathBuf),
     Finished,
-    Extracting(JoinHandle<()>),
+    Extracting(JoinHandle<Vec<RawImage>>),
 }
